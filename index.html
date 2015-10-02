@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pathlogical</title>
+  <meta charset="utf8">
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+
+    .guide {
+      fill: none;
+      stroke: #ccc;
+      stroke-dasharray: 5 2;
+    }
+
+
+    .shape {
+      fill: #f90;
+      fill: url(#img1);
+      /*stroke: #333;*/
+    }
+
+
+  </style>
+</head>
+<body>
+
+<h1>Pathlogical</h1>
+
+<p>Every path fits within a circle</p>
+
+<div id="examples"></div>
+
+<svg>
+  <defs>
+  <pattern id="img1" patternUnits="userSpaceOnUse" width="100" height="100">
+    <image xlink:href="http://bl.ocks.org/mbostock/raw/7280327/shibe.jpg" x="0" y="0" width="100" height="100" />
+  </pattern>
+</defs>
+</svg>
+
+<script type="text/javascript" src="d3.js"></script>
+<script type="text/javascript" src="pathlogical.js"></script>
+<script type="text/javascript">
+
+var width = 512, height = 512
+
+var examples = d3.select('#examples')
+
+var example = examples.append('div')
+
+var svg = example.append('svg')
+        .attr({ width: width, height: height })
+
+var defs = svg.append('defs')
+
+svg = svg
+        .append('g')
+        .attr({ transform: 'translate(' + [width/2, height/2] + ')' })
+
+var circle = pathlogical('circle')
+                .outerRadius(200)
+
+svg.append('path')
+  .attr('d', circle)
+  .attr('class', 'guide')
+
+// svg.append('path')
+//   .attr('d', pathlogical('triangle'))
+//   .attr('opacity', 0.5)
+
+// svg.append('path')
+//   .attr('d', pathlogical('pentagon'))
+//   .attr('stroke', '#c00')
+//   .attr('opacity', 0.5)
+
+function joinPath(path) {
+  console.log(path)
+  return path.map(function(d) { return d.join(' ') }).join('\n');
+}
+
+
+var sidesSlider = examples.append('input')
+              .attr({
+                type: 'range',
+                min: 2,
+                max: 24
+              })
+              .on('input', render)
+
+var outerRadiusSlider = examples.append('input')
+              .attr({
+                type: 'range',
+                min: 0,
+                max: 200
+              })
+              .on('input', render)
+
+var innerRadiusSlider = examples.append('input')
+              .attr({
+                type: 'range',
+                min: 0,
+                max: 200
+              })
+              .on('input', render)
+
+var pa = pathlogical('star')
+            .sides(5)
+            .outerRadius(200)
+            .innerRadius(80)
+            .outerRadius(100)
+            .innerRadius(160)
+
+// var p = defs.append('clipPath')
+//   .attr('id', 'clipping')
+//   .append('path')
+
+var p = svg.append('path')
+  .attr('class', 'shape')
+  .attr('d', function(d) {
+    var tmp = [pa()]
+    pa.type('polygon').sides(5).outerRadius(100)
+    tmp.push(pa().reverse())
+    pa.outerRadius(200)
+    tmp.unshift(pa().reverse())
+    pa.type('star').sides(5).outerRadius(100).innerRadius(40)
+    tmp.push(pa())
+    // console.log(tmp)
+    tmp = d3.merge(tmp, pa())
+    return joinPath(tmp)
+  })
+
+// var l = p.node().getTotalLength()
+
+// p
+//   .attr('stroke-dasharray', l)
+//   .attr('stroke-dashoffset', l)
+//   .attr('opacity', 0.5)
+//   .transition()
+//   // .ease('linear')
+//   .duration(4000)
+//   .attr('stroke-dashoffset', 0)
+
+
+// console.log(p.node().getTotalLength())
+
+// var p = svg.append('path')
+//   .attr('d', pa.type('cross'))
+//   .attr('stroke', '#c00')
+//   .attr('opacity', 0.5)
+
+function render() {
+  pa
+    .sides(sidesSlider.node().value)
+    .innerRadius(innerRadiusSlider.node().value)
+    .outerRadius(outerRadiusSlider.node().value)
+
+  p
+    // .transition()
+    // .duration(1000)
+    .attr('d', pa)
+}
+
+
+</script>
+
+</body>
+</html>
