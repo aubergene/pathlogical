@@ -71,6 +71,23 @@ var yDeltaSlider = examples.append('div')
   })
   .on('input', render);
 
+var deltaSlider = examples.append('div')
+  .append('label')
+  .text('Delta')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: -2,
+    max: 2,
+    step: 0.1,
+    value: interpolator.xDelta()
+  })
+  .on('input', function() {
+    xDeltaSlider.node().value = this.value;
+    yDeltaSlider.node().value = this.value;
+    render();
+  });
+
 var interpolatorSelect = examples.append('div')
   .append('label')
   .text('Interpolator')

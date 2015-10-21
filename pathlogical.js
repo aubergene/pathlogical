@@ -65,6 +65,13 @@
           return tmp;
         };
 
+        my.delta = function(x) {
+          if (!arguments.length) return [xDelta, yDelta];
+          xDelta = functor(x);
+          yDelta = functor(x);
+          return my;
+        };
+
         my.xDelta = function(x) {
           if (!arguments.length) return xDelta;
           xDelta = functor(x);
