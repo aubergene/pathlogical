@@ -47,6 +47,9 @@
     },
     interpolator: {
       midPoint: function() {
+        var xDelta = functor(-0.5),
+            yDelta = functor(-0.5);
+
         var my = function(points) {
           var tmp = [];
           for (var i = 1; i <= points.length; i++) {
@@ -54,13 +57,26 @@
             var p = i == points.length ? points[0] : points[i];
             var x = (p[0] + points[i - 1][0]) / 2;
             var y = (p[1] + points[i - 1][1]) / 2;
-            x += x * -0.5;
-            y += y * -0.5;
+            x += x * xDelta();
+            y += y * yDelta();
             tmp.push([x, y]);
           }
           // tmp.push(points[points.length-1])
           return tmp;
         };
+
+        my.xDelta = function(x) {
+          if (!arguments.length) return xDelta;
+          xDelta = functor(x);
+          return my;
+        };
+
+        my.yDelta = function(x) {
+          if (!arguments.length) return yDelta;
+          yDelta = functor(x);
+          return my;
+        };
+
         return my;
       }
     }

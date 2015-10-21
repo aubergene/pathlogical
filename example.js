@@ -45,6 +45,32 @@ var radiusSlider = examples.append('div')
   })
   .on('input', render);
 
+var xDeltaSlider = examples.append('div')
+  .append('label')
+  .text('X delta')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: -2,
+    max: 2,
+    step: 0.1,
+    value: interpolator.xDelta()
+  })
+  .on('input', render);
+
+var yDeltaSlider = examples.append('div')
+  .append('label')
+  .text('Y delta')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: -2,
+    max: 2,
+    step: 0.1,
+    value: interpolator.yDelta()
+  })
+  .on('input', render);
+
 var interpolatorSelect = examples.append('div')
   .append('label')
   .text('Interpolator')
@@ -53,7 +79,11 @@ var interpolatorSelect = examples.append('div')
 
 interpolatorSelect
   .selectAll('option')
-  .data(['linear-closed', 'basis-closed', 'cardinal-closed'])
+  .data([
+    'cardinal-closed',
+    'linear-closed',
+    'basis-closed',
+  ])
   .enter()
   .append('option')
   .text(function(d) { return d })
@@ -81,27 +111,31 @@ var g = svg.append('g')
 render();
 
 function render(e) {
-  var sides = sidesSlider.node().value;
-  var radius = radiusSlider.node().value;
-
-  pa.sides(sides).radius(radius);
+  pa.sides(sidesSlider.node().value)
+    .radius(radiusSlider.node().value);
 
   var select = interpolatorSelect.node();
   var lineInterpolator = select.options[select.selectedIndex].value;
-  var tension = tensionSlider.node().value;
 
   line.interpolate(lineInterpolator)
-    .tension(tension);
+    .tension(tensionSlider.node().value);
+
+  interpolator
+    .xDelta(xDeltaSlider.node().value)
+    .yDelta(yDeltaSlider.node().value);
 
   var points = interpolator(pa());
 
-  points.push(points[0]);
-  pa.radius(radius * 0.35);
-  var tmp = pa();
-  tmp.push(tmp[0]);
-  points = points.concat(tmp.reverse());
+  // points.push(points[0]);
+  // pa.radius(radius * 0.35);
+  // var tmp = pa();
+  // tmp.push(tmp[0]);
+  // points = points.concat(tmp.reverse());
 
-  p.datum(points).attr('d', line);
+  // p.datum(points).attr('d', line);
+  p.datum(points).attr('d', function(d) {
+    return line(d);
+  });
 
   var gg = g.selectAll('.point')
     .data(points);
