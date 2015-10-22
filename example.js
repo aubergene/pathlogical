@@ -120,7 +120,8 @@ var tensionSlider = examples.append('div')
   .on('input', render);
 
 var p = svg.append('path')
-  .attr('class', 'shape');
+  .attr('class', 'shape')
+  .attr('filter', 'url(#dropShadow)');
 
 var g = svg.append('g')
   .attr('class', 'points');

@@ -44,6 +44,17 @@
 
 <div id="examples"></div>
 
+<svg width="240" height="240" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <filter id="dropShadow" y="-10%" height="180%" x="-10%" width="180%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+    <feOffset dx="2" dy="4" />
+    <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+</svg>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="pathlogical.js"></script>
 <script type="text/javascript" src="example.js"></script>
