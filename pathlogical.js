@@ -61,7 +61,6 @@
             y += y * yDelta();
             tmp.push([x, y]);
           }
-          // tmp.push(points[points.length-1])
           return tmp;
         };
 

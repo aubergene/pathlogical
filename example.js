@@ -1,4 +1,4 @@
-var width = 256, height = 256, radius = 64;
+var width = 256, height = 256, baseRadius = 100;
 
 var examples = d3.select('#examples');
 
@@ -8,7 +8,7 @@ var interpolator = pathlogical.interpolator.midPoint();
 
 var pa = pathlogical.points.polygon()
           .sides(6)
-          .radius(100);
+          .radius(baseRadius);
 
 var line = d3.svg.line();
 
@@ -18,7 +18,7 @@ var svg = example.append('svg')
         .attr({ transform: 'translate(' + [width / 2, height / 2] + ')' });
 
 svg.append('circle')
-  .attr('r', radius)
+  .attr('r', baseRadius)
   .attr('class', 'guide');
 
 var sidesSlider = examples.append('div')
@@ -142,21 +142,20 @@ function render(e) {
     .xDelta(xDeltaSlider.node().value)
     .yDelta(yDeltaSlider.node().value);
 
-  var points = interpolator(pa());
+  var points = [interpolator(pa())];
 
-  // points.push(points[0]);
-  // pa.radius(radius * 0.35);
-  // var tmp = pa();
-  // tmp.push(tmp[0]);
-  // points = points.concat(tmp.reverse());
+  pa.radius(baseRadius * 0.35);
+  points.push(pa().reverse());
 
-  // p.datum(points).attr('d', line);
+  pa.sides(4).radius(baseRadius * 0.2);
+  points.push(pa());
+
   p.datum(points).attr('d', function(d) {
-    return line(d);
+    return d.map(line);
   });
 
   var gg = g.selectAll('.point')
-    .data(points);
+    .data(d3.merge(points));
 
   var tmp = gg.enter().append('g')
       .attr('class', 'point');
