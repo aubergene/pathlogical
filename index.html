@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hexagon</title>
+  <meta charset="utf8">
+  <style type="text/css">
+    body { margin: 0; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="build/pathlogical.js"></script>
+<script type="text/javascript">
+  var width = 960, height = 500, baseRadius = 100;
+
+var el = d3.select('body').append('div')
+    .style({ width: width + 'px', height: height + 'px', position: 'relative' })
+
+var svg = el.append('svg')
+    .attr({ width: width, height: height })
+    .append('g')
+    .attr({ transform: 'translate(' + [width / 2, height / 2] + ')' });
+
+// var interpolator = pathlogical.interpolator.midPoint();
+
+// var pa = pathlogical.regularPolygon()
+var pa = pathlogical.star()
+          .sides(6)
+          .radius(baseRadius);
+
+console.log(pa())
+
+var line = d3.svg.line();
+
+svg.append('circle')
+  .attr('r', baseRadius)
+  .style({
+    fill: 'none',
+    stroke: '#ccc',
+    'stroke-dasharray': '5 2'
+  });
+
+var sidesSlider = el.append('div')
+  .style({ position: 'absolute', top: '10px', right: '10px' })
+  .append('label')
+  .text('Sides')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: 3,
+    max: 20,
+    value: pa.sides()
+  })
+  .on('input', render);
+
+var radiusSlider = el.append('div')
+  .style({ position: 'absolute', top: '40px', right: '10px' })
+  .append('label')
+  .text('Radius')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: 16,
+    max: height / 2 -10,
+    value: pa.radius()
+  })
+  .on('input', render);
+
+var deltaSlider = el.append('div')
+  .style({ position: 'absolute', top: '70px', right: '10px' })
+  .append('label')
+  .text('Delta')
+  .append('input')
+  .attr({
+    type: 'range',
+    min: -5,
+    max: 5,
+    value: pa.delta()[0],
+    step: 0.1
+  })
+  .on('input', render);
+
+var p = svg.append('path')
+  .style({ fill: '#f60', opacity: 0.5 })
+
+var g = svg.append('g')
+  .attr('class', 'points');
+
+render();
+
+function render(e) {
+  pa.sides(sidesSlider.node().value)
+    .radius(radiusSlider.node().value)
+    .delta(deltaSlider.node().value)
+
+  p.datum(pa)
+    .attr('d', line);
+
+  var s = g.selectAll('text').data(pa)
+
+  s.enter()
+    .append('text')
+    .text(function(d, i) { return 1 + i })
+
+  s.attr({
+    x: function(d) { return d[0] },
+    y: function(d) { return d[1] },
+    dy: '0.3em',
+    'text-anchor': 'middle'
+  })
+
+  s.exit().remove()
+
+
+
+}
+
+</script>
+
+</body>
+</html>
