@@ -6,11 +6,25 @@
   <meta charset="utf8">
   <style type="text/css">
     body { margin: 0; font-family: sans-serif; }
+    .points circle { fill: #666; opacity: 0;}
+    .stage:hover .points circle { opacity: 0.1;}
+    .points:hover circle { fill: #666; opacity: 1;}
+    .points text { font-size: 10px; opacity: 0;}
+    .points:hover text { opacity: 1; }
   </style>
 </head>
 <body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<!--
+<script src="https://d3js.org/d3-shape.v0.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
+<script src="https://d3js.org/d3-path.v0.1.min.js"></script>
+ -->
+
 <script type="text/javascript" src="build/pathlogical.js"></script>
+
+
 <script type="text/javascript">
   var width = 960, height = 500, baseRadius = 100;
 
@@ -20,16 +34,15 @@ var el = d3.select('body').append('div')
 var svg = el.append('svg')
     .attr({ width: width, height: height })
     .append('g')
-    .attr({ transform: 'translate(' + [width / 2, height / 2] + ')' });
+    .attr({ transform: 'translate(' + [width / 2, height / 2] + ')', 'class': 'stage' });
 
 // var interpolator = pathlogical.interpolator.midPoint();
 
 // var pa = pathlogical.regularPolygon()
-var pa = pathlogical.star()
-          .sides(6)
+// var pa = pathlogical.star()
+var pa = pathlogical.roundel()
+          .sides(64)
           .radius(baseRadius);
-
-console.log(pa())
 
 var line = d3.svg.line();
 
@@ -42,20 +55,20 @@ svg.append('circle')
   });
 
 var sidesSlider = el.append('div')
-  .style({ position: 'absolute', top: '10px', right: '10px' })
+  .style({ position: 'fixed', top: '10px', right: '10px' })
   .append('label')
   .text('Sides')
   .append('input')
   .attr({
     type: 'range',
-    min: 3,
-    max: 20,
+    min: 2,
+    max: 100,
     value: pa.sides()
   })
   .on('input', render);
 
 var radiusSlider = el.append('div')
-  .style({ position: 'absolute', top: '40px', right: '10px' })
+  .style({ position: 'fixed', top: '40px', right: '10px' })
   .append('label')
   .text('Radius')
   .append('input')
@@ -67,50 +80,77 @@ var radiusSlider = el.append('div')
   })
   .on('input', render);
 
-var deltaSlider = el.append('div')
-  .style({ position: 'absolute', top: '70px', right: '10px' })
+var innerRadiusSlider = el.append('div')
+  .style({ position: 'fixed', top: '70px', right: '10px' })
   .append('label')
-  .text('Delta')
+  .text('innerRadius')
   .append('input')
   .attr({
     type: 'range',
-    min: -5,
-    max: 5,
-    value: pa.delta()[0],
-    step: 0.1
+    min: 4,
+    max: height / 2 -10,
+    value: pa.innerRadius()
   })
   .on('input', render);
 
 var p = svg.append('path')
   .style({ fill: '#f60', opacity: 0.5 })
 
-var g = svg.append('g')
+var points = svg.append('g')
   .attr('class', 'points');
 
 render();
 
 function render(e) {
+  var r = radiusSlider.node().value,
+      ir = innerRadiusSlider.node().value
+
   pa.sides(sidesSlider.node().value)
-    .radius(radiusSlider.node().value)
-    .delta(deltaSlider.node().value)
+    .radius(r)
+    .innerRadius(ir)
+    // .delta(deltaSlider.node().value)
 
-  p.datum(pa)
-    .attr('d', line);
+  var data = pa()
 
-  var s = g.selectAll('text').data(pa)
+  // console.log(data)
 
-  s.enter()
+  p.datum(data)
+    // .attr('d', pa.path);
+    // .attr('d', line);
+    .attr('d', function(d) {
+      console.log(d)
+      return d.map(function(dd) {
+        console.log(dd)
+        return [
+          "M" + dd[0].join(' '),
+          "A "+r+","+r+" 0 0 0 " + dd[1].join(' '),
+          "L" + dd[2].join(' '),
+          "A "+ir+","+ir+" 0 0 1 " + dd[3].join(' '),
+          "Z"
+        ].join(' ')
+      }).join(' ')
+    })
+    .style('stroke', '#c00')
+
+  var point = points.selectAll('.point').data(d3.merge(data))
+
+  var pointEnter = point.enter().append('g').attr('class', 'point')
+
+  pointEnter
+    .append('circle')
+    .attr('r', 5)
+
+  pointEnter
     .append('text')
-    .text(function(d, i) { return 1 + i })
+    .text(function(d, i) { return i })
+    .attr({
+      dy: '0.3em',
+      'text-anchor': 'middle'
+    })
 
-  s.attr({
-    x: function(d) { return d[0] },
-    y: function(d) { return d[1] },
-    dy: '0.3em',
-    'text-anchor': 'middle'
-  })
+  point.attr('transform', function(d) { return 'translate(' + d[0] + ',' + d[1] + ')' })
 
-  s.exit().remove()
+  point.exit().remove()
 
 
 

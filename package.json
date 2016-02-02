@@ -19,7 +19,8 @@
     "url": "https://github.com/aubergene/pathlogical.git"
   },
   "scripts": {
-    "pretest": "mkdir -p build && node -e 'process.stdout.write(\"var version = \\\"\" + require(\"./package.json\").version + \"\\\"; export * from \\\"../index\\\"; export {version};\");' > build/bundle.js && rollup -f umd -u pathlogical -n pathlogical -o build/pathlogical.js -- build/bundle.js",
+    "build": "mkdir -p build && rollup -c rollup.config.js",
+    "pretest": "npm run build",
     "test": "faucet `find test -name '*-test.js'`",
     "prepublish": "npm run test && uglifyjs build/pathlogical.js -c -m -o build/pathlogical.min.js && rm -f build/pathlogical.zip && zip -j build/pathlogical.zip -- LICENSE README.md build/pathlogical.js build/pathlogical.min.js"
   },
@@ -27,7 +28,13 @@
     "d3-array": "~0.7.0",
     "faucet": "0.0",
     "rollup": "0.20.5",
+    "rollup-plugin-json": "^2.0.0",
+    "rollup-plugin-npm": "^1.3.0",
     "tape": "4",
     "uglify-js": "2"
+  },
+  "dependencies": {
+    "d3-shape": "^0.4.0",
+    "lodash-es": "github:lodash/lodash#es"
   }
 }
