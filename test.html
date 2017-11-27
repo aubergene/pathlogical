@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hexagon</title>
+  <meta charset="utf8">
+  <style type="text/css">
+    body { margin: 0; font-family: sans-serif; }
+    .points { cursor: pointer; }
+    .points circle { fill: #666; opacity: 0;}
+    .stage:hover .points circle { opacity: 0.1;}
+    .points:hover circle { fill: #666; opacity: 1;}
+    .points text { font-size: 10px; opacity: 0; user-select:none; }
+    .points:hover text { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<svg>
+
+</svg>
+
+<!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3-shape.v0.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
+<script src="https://d3js.org/d3-path.v0.1.min.js"></script>
+ -->
+
+<script type="text/javascript" src="vendor/d3.js"></script>
+<script type="text/javascript" src="build/pathlogical.js"></script>
+
+
+<script type="text/javascript">
+  var width = 960, height = 500;
+
+var el = d3.select('body').append('div')
+    .style({ width: width + 'px', height: height + 'px', position: 'relative' })
+
+var svg = el.append('svg')
+    .attr({ width: width, height: height })
+
+svg.append('rect')
+  .attr({ width: width, height: height, opacity: 0 })
+  .on('mousemove', render)
+
+
+svg = svg.append('g')
+    .attr({ transform: 'translate(' + [width / 2, height / 2] + ')', 'class': 'stage' });
+
+// var interpolator = pathlogical.interpolator.midPoint();
+
+// var pa = pathlogical.regularPolygon()
+// var pa = pathlogical.star()
+var pa = pathlogical.regularPolygon()
+          .sides(16)
+          .radius(baseRadius);
+
+var baseRadius = 20
+
+var line = d3.svg.line()
+  .interpolate('linear-closed')
+
+var angle = 10
+var rot = pathlogical.rotate().angle(0.05).origin([20, 30])
+
+var data = d3.range(6).map(function(d) {
+  return pa.radius(baseRadius += 30)().map(rot)
+})
+
+var ppp = svg.append('path')
+
+var points = svg.append('g')
+  .attr('class', 'points');
+
+
+var drag = d3.behavior.drag();
+
+drag.on('drag', function(d) {
+  console.log(d3.event)
+  // rot.angle(d.dy)
+  render()
+})
+
+function aLine(d) {
+  return d.map(line).join('\n')
+}
+
+
+render()
+
+
+function render() {
+  data[1] = data[1].map(rot)
+
+  var data2 = d3.transpose(data)
+
+  data2.forEach(function(d, i) {
+    if (i%2) d.reverse()
+  })
+
+  data2 = pathlogical.chunk(data2, 2).map(d3.merge)
+
+  console.log(data2)
+
+  ppp.datum(data2)
+    .attr('d', aLine)
+    .style('fill', 'none')
+    .style('stroke', '#000')
+
+  var point = points.selectAll('.point').data(d3.merge(data2))
+
+  var pointEnter = point.enter()
+    .append('g')
+    .attr('class', 'point')
+    .call(drag)
+    .on('click', function(d) {
+      console.log('wooo')
+    })
+
+  pointEnter
+    .append('circle')
+    .attr('r', 5)
+
+  pointEnter
+    .append('text')
+    .text(function(d, i) { return i })
+    .attr({
+      dy: '0.3em',
+      'text-anchor': 'middle'
+    })
+
+  point.attr('transform', function(d) { return 'translate(' + d[0] + ',' + d[1] + ')' })
+
+  point.exit().remove()
+
+}
+
+
+
+</script>
+
+</body>
+</html>

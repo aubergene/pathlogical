@@ -1,7 +1,7 @@
 {
   "name": "pathlogical",
-  "version": "0.0.1",
-  "description": "Generate path strings",
+  "version": "0.2.0",
+  "description": "Generate SVG path strings",
   "keywords": [
     "paths",
     "points"
@@ -12,29 +12,30 @@
     "name": "Julian Burgess",
     "url": "http://aubergene.com"
   },
-  "main": "build/pathlogical.js",
-  "jsnext:main": "index",
+  "main": "build/pathlogical.cjs.js",
+  "module": "build/pathlogical.es.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/aubergene/pathlogical.git"
   },
   "scripts": {
-    "build": "mkdir -p build && rollup -c rollup.config.js",
+    "build": "rollup -c",
     "pretest": "npm run build",
-    "test": "faucet `find test -name '*-test.js'`",
-    "prepublish": "npm run test && uglifyjs build/pathlogical.js -c -m -o build/pathlogical.min.js && rm -f build/pathlogical.zip && zip -j build/pathlogical.zip -- LICENSE README.md build/pathlogical.js build/pathlogical.min.js"
+    "test": "mocha"
   },
   "devDependencies": {
-    "d3-array": "~0.7.0",
-    "faucet": "0.0",
-    "rollup": "0.20.5",
-    "rollup-plugin-json": "^2.0.0",
-    "rollup-plugin-npm": "^1.3.0",
-    "tape": "4",
-    "uglify-js": "2"
+    "lodash-es": "^4.17.4",
+    "rollup": "^0.51.8",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-buble": "^0.18.0"
   },
+  "files": [
+    "dist/pathlogical.umd.js",
+    "dist/pathlogical.cjs.js",
+    "dist/pathlogical.es.js"
+  ],
   "dependencies": {
-    "d3-shape": "^0.4.0",
-    "lodash-es": "github:lodash/lodash#es"
+    "d3-shape": "^1.2.0"
   }
 }

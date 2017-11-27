@@ -15,26 +15,32 @@
 </head>
 <body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
 <!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 <script src="https://d3js.org/d3-shape.v0.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
 <script src="https://d3js.org/d3-path.v0.1.min.js"></script>
  -->
 
-<script type="text/javascript" src="build/pathlogical.js"></script>
+<script type="text/javascript" src="dist/pathlogical.umd.js"></script>
 
 
 <script type="text/javascript">
   var width = 960, height = 500, baseRadius = 100;
 
 var el = d3.select('body').append('div')
-    .style({ width: width + 'px', height: height + 'px', position: 'relative' })
+    .style('width', width + 'px')
+    .style('height', height + 'px')
+    .style('position', 'relative')
 
 var svg = el.append('svg')
-    .attr({ width: width, height: height })
+    .attr('width', width)
+    .attr('height', height)
     .append('g')
-    .attr({ transform: 'translate(' + [width / 2, height / 2] + ')', 'class': 'stage' });
+    .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
+    .attr('class', 'stage')
 
 // var interpolator = pathlogical.interpolator.midPoint();
 
@@ -44,57 +50,63 @@ var pa = pathlogical.roundel()
           .sides(64)
           .radius(baseRadius);
 
-var line = d3.svg.line();
+var line = d3.line();
 
-svg.append('circle')
-  .attr('r', baseRadius)
-  .style({
-    fill: 'none',
-    stroke: '#ccc',
-    'stroke-dasharray': '5 2'
-  });
+// svg.append('circle')
+//   .attr('r', baseRadius)
+//   .style({
+//     fill: 'none',
+//     stroke: '#ccc',
+//     'stroke-dasharray': '5 2'
+//   });
 
 var sidesSlider = el.append('div')
-  .style({ position: 'fixed', top: '10px', right: '10px' })
+  .style('top', '10px')
   .append('label')
   .text('Sides')
   .append('input')
-  .attr({
-    type: 'range',
-    min: 2,
-    max: 100,
-    value: pa.sides()
-  })
-  .on('input', render);
-
-var radiusSlider = el.append('div')
-  .style({ position: 'fixed', top: '40px', right: '10px' })
+  .attr('type', 'range')
+  .attr('min', 3)
+  .attr('max', 720)
+  .attr('value', pa.sides())
+  .on('input', render)
+  
+  var radiusSlider = el.append('div')
+  .style('top', '40px')
   .append('label')
   .text('Radius')
   .append('input')
-  .attr({
-    type: 'range',
-    min: 16,
-    max: height / 2 -10,
-    value: pa.radius()
-  })
+  .attr('type', 'range')
+  .attr('min', 16)
+  .attr('max', height / 2 -10)
+  .attr('value', pa.radius())
   .on('input', render);
-
-var innerRadiusSlider = el.append('div')
-  .style({ position: 'fixed', top: '70px', right: '10px' })
+  
+  var innerRadiusSlider = el.append('div')
+  .style('top', '70px')
   .append('label')
   .text('innerRadius')
   .append('input')
-  .attr({
-    type: 'range',
-    min: 4,
-    max: height / 2 -10,
-    value: pa.innerRadius()
-  })
+  .attr('type', 'range')
+  .attr('min', 4)
+  .attr('max', height / 2 - 10)
+  .attr('value', pa.innerRadius())
   .on('input', render);
+  
+  var rotateSlider = el.append('div')
+  .style('top', '100px')
+  .append('label')
+  .text('rotate')
+  .append('input')
+  .attr('type', 'range')
+  .attr('min', -Math.PI)
+  .attr('max', Math.PI)
+  .attr('step', 0.1)
+  .attr('value', pa.rotate())
+  .on('input', render)
 
 var p = svg.append('path')
-  .style({ fill: '#f60', opacity: 0.5 })
+  .style('fill', '#000')
 
 var points = svg.append('g')
   .attr('class', 'points');
@@ -104,11 +116,14 @@ render();
 function render(e) {
   var r = radiusSlider.node().value,
       ir = innerRadiusSlider.node().value
+      rt = rotateSlider.node().value
+
+  console.log(rt)
 
   pa.sides(sidesSlider.node().value)
     .radius(r)
     .innerRadius(ir)
-    // .delta(deltaSlider.node().value)
+    .rotate(rt)
 
   var data = pa()
 
@@ -118,9 +133,9 @@ function render(e) {
     // .attr('d', pa.path);
     // .attr('d', line);
     .attr('d', function(d) {
-      console.log(d)
+      // console.log(d)
       return d.map(function(dd) {
-        console.log(dd)
+        // console.log(dd)
         return [
           "M" + dd[0].join(' '),
           "A "+r+","+r+" 0 0 0 " + dd[1].join(' '),
@@ -130,7 +145,7 @@ function render(e) {
         ].join(' ')
       }).join(' ')
     })
-    .style('stroke', '#c00')
+    // .style('stroke', '#c00')
 
   var point = points.selectAll('.point').data(d3.merge(data))
 
