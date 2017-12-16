@@ -2,7 +2,7 @@ import constant from "./constant";
 
 export default function() {
   var xDelta = constant(-0.5),
-      yDelta = constant(-0.5);
+    yDelta = constant(-0.5);
 
   function interpolator(points) {
     var tmp = [];
@@ -19,11 +19,15 @@ export default function() {
   }
 
   interpolator.xDelta = function(_) {
-    return arguments.length ? (xDelta = typeof _ === "function" ? _ : constant(_), interpolator) : xDelta;
+    return arguments.length
+      ? ((xDelta = typeof _ === "function" ? _ : constant(_)), interpolator)
+      : xDelta;
   };
 
   interpolator.yDelta = function(_) {
-    return arguments.length ? (yDelta = typeof _ === "function" ? _ : constant(_), interpolator) : yDelta;
+    return arguments.length
+      ? ((yDelta = typeof _ === "function" ? _ : constant(_)), interpolator)
+      : yDelta;
   };
 
   interpolator.delta = function(_) {
@@ -34,4 +38,4 @@ export default function() {
   };
 
   return interpolator;
-};
+}
