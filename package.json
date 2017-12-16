@@ -19,6 +19,7 @@
     "url": "https://github.com/aubergene/pathlogical.git"
   },
   "scripts": {
+    "dev": "rollup -wc",
     "build": "rollup -c",
     "pretest": "npm run build",
     "test": "mocha"

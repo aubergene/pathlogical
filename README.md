@@ -1,6 +1,6 @@
 # pathlogical
 
-Generate points and paths for drawing shapes
+A logical path library
 
 ## Installing
 

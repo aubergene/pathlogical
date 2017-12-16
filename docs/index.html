@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Pathlogical</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
+  <style>
+    body {
+      background: #eee;
+    }
+
+    svg {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Pathlogical</h1>
+      <p class="subtitle">
+        A logical path library for drawing stuff
+      </p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+			<div class="columns">
+				<div class="column">Triangle</div>
+				<div class="column is-two-thirds">
+					<svg id="triangle"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Diamond</div>
+				<div class="column is-two-thirds">
+          <svg id="diamond"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Square</div>
+				<div class="column is-two-thirds">
+          <svg id="square"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Pentagon</div>
+				<div class="column is-two-thirds">
+          <svg id="pentagon"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Hexagon</div>
+				<div class="column is-two-thirds">
+          <svg id="hexagon"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Septagon</div>
+				<div class="column is-two-thirds">
+          <svg id="septagon"></svg>
+				</div>
+			</div>
+			<div class="columns">
+        <div class="column">Octagon</div>
+				<div class="column is-two-thirds">
+          <svg id="octagon"></svg>
+				</div>
+			</div>
+    </div>
+  </section>
+
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="../dist/pathlogical.umd.js"></script>
+  <script>
+    var width = 500
+    var height = 200
+
+		var p = pathlogical
+
+		d3.selectAll('svg')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('viewBox', [0, 0, width, height])
+			.append('g')
+			.attr('transform', `translate(${width/2},${height/2})`)
+      .append('path')
+      .attr('d', function() {
+        var shape = this.parentElement.parentElement.id
+        var p = pathlogical[shape]
+        p.line().curve(d3.curveCardinalClosed.tension(0.4))
+        return p()
+      })
+  </script>
+
+</body>
+
+</html>

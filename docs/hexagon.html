@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hexagon</title>
+  <meta charset="utf8">
+  <style type="text/css">
+    body { margin: 0; font-family: sans-serif; }
+    .points { cursor: pointer; }
+    .points circle { fill: #666; opacity: 0;}
+    .stage:hover .points circle { opacity: 0.1;}
+    .points:hover circle { fill: #666; opacity: 1;}
+    .points text { font-size: 18px; opacity: 0; user-select:none; }
+    .points:hover text { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="../dist/pathlogical.umd.js"></script>
+
+<script type="text/javascript">
+
+var size = 1000, margin = 50, radius = (size - margin)/2;
+
+var el = d3.select('body').append('div')
+    .style('width', '100vw')
+    .style('height', '100vh')
+    .style('position', 'relative')
+
+var svg = el.append('svg')
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', [0, 0, size, size])
+    .append('g')
+    .attr('transform', 'translate(' + [size/2, size/2] + ')')
+    .attr('class', 'stage');
+
+var numShapes = 8
+
+var pa = pathlogical.hexagon
+
+var color = d3.scaleLinear().range(['#f30', '#fa0'])
+
+var delta = radius / numShapes
+
+var data = d3.range(numShapes).map(function(d, i) {
+  return radius - delta * i
+})
+
+color.domain([0, data.length])
+
+var shapes = svg.append('g')
+  .attr('class', 'shapes');
+
+var points = svg.append('g')
+  .attr('class', 'points');
+
+render()
+
+
+function render() {
+  shapes.selectAll('path')
+    .data(data)
+    .enter()
+    .append('path')
+    .attr('d', function(d) {
+      return pa.radius(d)()
+    })
+    .style('fill', function(d, i) {
+      return color(i)
+    })
+
+  var point = points.selectAll('.point').data(d3.merge(data))
+
+  var pointEnter = point.enter()
+    .append('g')
+    .attr('class', 'point')
+
+  pointEnter
+    .append('circle')
+    .attr('r', 5)
+
+  pointEnter
+    .append('text')
+    .text(function(d, i) { return i })
+    .attr('dy', '0.3em')
+    .attr('text-anchor', 'middle')
+
+  point.merge(pointEnter)
+    .attr('transform', function(d) {
+      return 'translate(' + d[0] + ',' + d[1] + ')'
+    })
+
+  point.exit().remove()
+
+}
+
+
+
+</script>
+
+</body>
+</html>

@@ -20,15 +20,14 @@
 
 </svg>
 
-<!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<!--
 <script src="https://d3js.org/d3-shape.v0.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
 <script src="https://d3js.org/d3-path.v0.1.min.js"></script>
  -->
 
-<script type="text/javascript" src="vendor/d3.js"></script>
-<script type="text/javascript" src="build/pathlogical.js"></script>
+<script type="text/javascript" src="dist/pathlogical.umd.js"></script>
 
 
 <script type="text/javascript">
@@ -65,7 +64,7 @@ var angle = 10
 var rot = pathlogical.rotate().angle(0.05).origin([20, 30])
 
 var data = d3.range(6).map(function(d) {
-  return pa.radius(baseRadius += 30)().map(rot)
+  // return pa.radius(baseRadius += 30)().map(rot)
 })
 
 var ppp = svg.append('path')

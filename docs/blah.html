@@ -70,7 +70,7 @@ var sidesSlider = el.append('div')
   .attr('max', 720)
   .attr('value', pa.sides())
   .on('input', render)
-  
+
   var radiusSlider = el.append('div')
   .style('top', '40px')
   .append('label')
@@ -81,7 +81,7 @@ var sidesSlider = el.append('div')
   .attr('max', height / 2 -10)
   .attr('value', pa.radius())
   .on('input', render);
-  
+
   var innerRadiusSlider = el.append('div')
   .style('top', '70px')
   .append('label')
@@ -92,7 +92,7 @@ var sidesSlider = el.append('div')
   .attr('max', height / 2 - 10)
   .attr('value', pa.innerRadius())
   .on('input', render);
-  
+
   var rotateSlider = el.append('div')
   .style('top', '100px')
   .append('label')
